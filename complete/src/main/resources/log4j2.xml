@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="log-path">logs</Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%c [%d[ISO8601][%-5level](txID: %X{txID}, userID: %X{userID}) %m%n]" />
+		</Console>
+		
+		<RollingFile name="ErrorFile"
+					 fileName="${log-path}/error.log"
+					 filePattern="${log-path}/error-%d{dd-MM-yyyy}-%i.log"
+					 immediateFlush="true"
+					 >
+					 <PatternLayout pattern="[%d{ISO8601}][%-5level](txID: %X{txID}, userID: %X{userID}) %m%n" />
+					 <Policies>
+					 	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+					 	<SizeBasedTriggeringPolicy size="10 MB" />
+					 </Policies>
+					 <DefaultRolloverStrategy max="365" />
+		</RollingFile>
+		
+		<RollingFile name="JsonLoggerFile"
+					 fileName="${log-path}/jsonLogger.log"
+					 filePattern="${log-path}/jsonLogger-%d{dd-MM-yyyy}-%i.log">
+					 <PatternLayout pattern="%m%n" />
+					 <Policies>
+					 	<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+					 	<SizeBasedTriggeringPolicy size="10 MB" />
+					 </Policies>
+					 
+					 <DefaultRolloverStrategy max="365" />
+		</RollingFile>
+	</Appenders>
+	
+	<Loggers>
+		<Logger name="JsonLogger" level="debug" additivity="false">
+			<AppenderRef ref="JsonLoggerFile" level="INFO" />
+			<AppenderRef ref="Console" level="DEBUG" />
+		</Logger>
+		<Logger name="Error" level="debug" additivity="false">
+			<AppenderRef ref="ErrorFile" level="ERROR" />
+			<AppenderRef ref="Console" level="DEBUG" />
+		</Logger>
+		<Root level="INFO">
+			<AppenderRef ref="Console" level="INFO"/>
+		</Root>
+	</Loggers>
+</Configuration>
